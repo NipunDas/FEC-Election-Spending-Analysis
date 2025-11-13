@@ -1,4 +1,4 @@
-## CSC-466 Week 7: Final Project EDA
+## CSC-466 Week 8: Final Project EDA
 By: Nipun Das (nkdas@calpoly.edu)
 
 ### Dataset Choice
