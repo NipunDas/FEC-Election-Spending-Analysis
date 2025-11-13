@@ -19,6 +19,6 @@ Something else I decided to look at is the correlation between a candidate's sta
 
 Finally, I decided to look at if the incumbency status of the candidate influenced the transaction amounts. Typically, incumbents have an advantage when running against a challenger, as they often have higher name recognition and established experience to campaign on. From plotting the results, challengers interestingly typically have the highest transaction amounts, followed by those running for an open race, and then incumbents. This makes sense, since a challenger may require more funding to overcome the disadvantages against an incumbent. With open races, neither candidate has the incumbency advantage or the disadvantage of being a challenger, so it makes sense why the average transaction amount is in between the cases for challengers and incumbents. Incumbents often have an advantage and in some cases may even run unopposed (or without a serious challenger), which likely leads to many cases where spending for incumbent candidates is low.
 
-![Incumbency Status Impact on Transaction Amount](./images/transaction_vs_starting.png)
+![Incumbency Status Impact on Transaction Amount](./images/incumbency_status.png)
 
 One potential concern with this data is the sparsity of the interaction matrix between committees and candidates, with 2.16% of the values in the interaction matrix filled in. This may not be a sufficient density to perform matrix factorization and extract latent features about candidates or committees.
