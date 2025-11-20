@@ -18,6 +18,7 @@ def main():
   senate_contributions_df = (contributions_df
                             .filter((pl.col('recipient.type') == 'CAND') & (pl.col('contributor.type') == 'C'))
                             .filter(pl.col('seat').is_in(['federal:house', 'federal:senate']))
+                            .filter(pl.col('amount') > 0)
                             .with_columns(date = pl.col('date').str.strptime(pl.Date, '%Y-%m-%d'))
                             .join(recipients_df, on=['bonica.rid', 'cycle'], how='left')
                             .select([

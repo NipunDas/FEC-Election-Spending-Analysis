@@ -1,3 +1,26 @@
 RAW_CONTRIBUTIONS_TABLE_CSV_PATH = './data/contribDB_1980.csv'
 RAW_RECIPIENTS_TABLE_CSV_PATH = './data/dime_recipients_1979_2024.csv'
 CONTRIBUTIONS_TABLE_PARQUET_PATH = './intermediate-output/contributions.parquet'
+
+TARGET_COL = 'amount'
+
+CANDIDATE_FEATURES = [
+  'candidate.id',
+  'recipient.name',
+  'candidate.party',
+  'recipient.state',
+  'election.type',
+  'ico.status',
+]
+
+COMMITTEE_FEATURES = [
+  'committee.id',
+  'contributor.name',
+  'contributor.address',
+  'contributor.city',
+  'contributor.state',
+  'contributor.zipcode',
+  'is.corp',
+]
+
+TRAIN_FEATURES = CANDIDATE_FEATURES + COMMITTEE_FEATURES
