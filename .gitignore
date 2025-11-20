@@ -1,0 +1,5 @@
+# Python-generated files
+__pycache__/
+
+# Raw CSV is too big, only push processed parquet files
+first-draft/data
