@@ -11,16 +11,16 @@ PARTY_CODE_MAP = {
 }
 
 def main():
-  contributions_df = pl.read_csv(constants.RAW_CONTRIBUTIONS_TABLE_CSV_PATH, ignore_errors=True)
-  recipients_df = pl.read_csv(constants.RAW_RECIPIENTS_TABLE_CSV_PATH, ignore_errors=True)
+  contributions_lf = pl.scan_csv(constants.RAW_CONTRIBUTIONS_TABLE_CSV_PATH, ignore_errors=True)
+  recipients_lf = pl.scan_csv(constants.RAW_RECIPIENTS_TABLE_CSV_PATH, ignore_errors=True)
 
   # Specifically look at contributions from committees to political candidates for federal congress races
-  senate_contributions_df = (contributions_df
+  senate_contributions_lf = (contributions_lf
                             .filter((pl.col('recipient.type') == 'CAND') & (pl.col('contributor.type') == 'C'))
                             .filter(pl.col('seat').is_in(['federal:house', 'federal:senate']))
                             .filter(pl.col('amount') > 0)
                             .with_columns(date = pl.col('date').str.strptime(pl.Date, '%Y-%m-%d'))
-                            .join(recipients_df, on=['bonica.rid', 'cycle'], how='left')
+                            .join(recipients_lf, on=['bonica.rid', 'cycle'], how='left')
                             .select([
                               # Contribution features
                               'transaction.id',
@@ -44,7 +44,7 @@ def main():
                               'ico.status',
                             ]))
   
-  senate_contributions_df.write_parquet(constants.CONTRIBUTIONS_TABLE_PARQUET_PATH)
+  senate_contributions_lf.sink_parquet(constants.CONTRIBUTIONS_TABLE_PARQUET_PATH)
 
 
 if __name__ == '__main__':

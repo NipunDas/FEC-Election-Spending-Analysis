@@ -32,28 +32,15 @@ class CFModel(BaseModel):
     )
 
   def fit(self, X_train: pl.DataFrame, y_train: pl.Series):
-    agg_donations_df = (X_train
-                        .select(['committee.id', 'candidate.id', y_train.alias('amount')])
-                        .group_by(['committee.id', 'candidate.id'])
-                        .sum())
-    # min-max scale by committee (each committee's minimum donation is 0, max donation is 1)
-    normalized_donations_df = (agg_donations_df
-                               .with_columns(
-                                  pl.col('amount').min().over('committee.id').alias('min_donation'),
-                                  pl.col('amount').max().over('committee.id').alias('max_donation'),
-                                )
-                                .with_columns(
-                                  ((pl.col('amount') - pl.col('min_donation')) / (pl.col('max_donation') - pl.col('min_donation')))
-                                  .clip(0, 1).alias('normalized_donation')
-                                )
-                                .select(
-                                  pl.col('committee.id').alias('userID'),
-                                  pl.col('candidate.id').alias('itemID'),
-                                  pl.col('normalized_donation').alias('rating'),
-                                ))
+    donations_df = (X_train
+                    .select([
+                      pl.col('committee.id').alias('userID'),
+                      pl.col('candidate.id').alias('itemID'),
+                      pl.lit(1).alias('rating')
+                    ]).unique())
     
     reader = Reader(rating_scale=(0, 1))
-    data = Dataset.load_from_df(normalized_donations_df.to_pandas(), reader)
+    data = Dataset.load_from_df(donations_df.to_pandas(), reader)
     trainset = data.build_full_trainset()
 
     self.model.fit(trainset)

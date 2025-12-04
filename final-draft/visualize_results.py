@@ -6,10 +6,10 @@ import numpy as np
 models = ['Random', 'Heuristic', 'Collaborative Filtering', 'Random Forest']
 metrics = ['Precision@K', 'Recall@K', 'MAP@K']
 values = {
-    'Random':                  [0.0075, 0.0068, 0.0019],
-    'Heuristic':               [0.1280, 0.1439, 0.0702],
-    'Collaborative Filtering': [0.0110, 0.0088, 0.0022],
-    'Random Forest':           [0.0064, 0.0077, 0.0018],
+    'Random':                  [0.0016, 0.0006, 0.0003],
+    'Heuristic':               [0.0457, 0.0331, 0.0270],
+    'SVD':                     [0.0019, 0.0007, 0.0003],
+    'ALS':                     [0.1005, 0.1956, 0.1353],
 }
 
 # ---- Plot ----
@@ -20,8 +20,8 @@ offset = width * 1.5
 plt.figure(figsize=(10, 6))
 bars1 = plt.bar(x - offset, values['Random'], width, label='Random')
 bars2 = plt.bar(x - width/2, values['Heuristic'], width, label='Heuristic')
-bars3 = plt.bar(x + width/2, values['Collaborative Filtering'], width, label='Collaborative Filtering')
-bars4 = plt.bar(x + offset, values['Random Forest'], width, label='Random Forest')
+bars3 = plt.bar(x + width/2, values['SVD'], width, label='SVD')
+bars4 = plt.bar(x + offset, values['ALS'], width, label='ALS')
 
 plt.title('Model comparison (TOP_K = 20)')
 plt.ylabel('Score')

@@ -3,3 +3,4 @@ __pycache__/
 
 # Raw CSV is too big, only push processed parquet files
 first-draft/data
+final-draft/data
