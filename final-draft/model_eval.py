@@ -7,6 +7,7 @@ from models.random import RandomModel
 from models.heuristic import HeuristicModel
 from models.cf import CFModel
 from models.als import ALSModel
+from models.random_forest import RandomForestModel
 
 TOP_K = 20
 
@@ -50,7 +51,8 @@ def main():
     'Random': RandomModel(),
     'Heuristic': HeuristicModel(),
     # 'Collaborative Filtering': CFModel(n_factors=15),
-    'ALS': ALSModel(),
+    # 'ALS': ALSModel(),
+    'Random Forest': RandomForestModel(),
   }
 
   X_train, y_train = data_loader.get_training_data()

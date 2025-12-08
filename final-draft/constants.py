@@ -2,6 +2,8 @@ RAW_CONTRIBUTIONS_TABLE_CSV_PATH = './data/contribDB_2010.csv.gz'
 RAW_RECIPIENTS_TABLE_CSV_PATH = './data/dime_recipients_1979_2024.csv'
 RAW_CONTRIBUTORS_TABLE_CSV_PATH = './data/dime_contributors_1979_2024.csv.gz'
 CONTRIBUTIONS_TABLE_PARQUET_PATH = './intermediate-output/contributions.parquet'
+CANDIDATE_EMBEDDINGS_PARQUET_PATH = './intermediate-output/candidate_embeddings.parquet'
+CANDIDATE_EMBEDDINGS_WITH_CLUSTERS_PARQUET_PATH = './intermediate-output/candidate_embeddings_clustered.parquet'
 
 TARGET_COL = 'amount'
 

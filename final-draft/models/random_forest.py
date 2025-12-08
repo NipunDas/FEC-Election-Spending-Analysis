@@ -11,8 +11,9 @@ from typing import Optional
 from typing import Optional
 
 class RandomForestModel(BaseModel):
-  """Heuristic model that labels each committee with the party it donated most to, then predicts the most common donations."""
+  """Random forest model that uses features about the candidates and committees to predict donation amounts."""
 
+  # input features used (not including engineered input features)
   DEFAULT_INPUT_FEATURES = [
     'election.type',
     'candidate.party',
@@ -36,7 +37,7 @@ class RandomForestModel(BaseModel):
 
     cat_input_features = [f for f in self.input_features if f in constants.CATEGORICAL_FEATURES]
     preprocessor = ColumnTransformer(
-      transformers = [('categorical_ohe', OneHotEncoder(), cat_input_features)],
+      transformers = [('categorical_ohe', OneHotEncoder(handle_unknown='ignore'), cat_input_features)],
       remainder='passthrough',
     )
     rf_regressor = RandomForestRegressor(
@@ -50,8 +51,32 @@ class RandomForestModel(BaseModel):
       ('rf_regressor', rf_regressor),
     ])
 
+    self.committee_df_with_party: Optional[pl.DataFrame] = None
+    self.committee_df_with_median_donations: Optional[pl.DataFrame] = None
+
   def fit(self, X_train: pl.DataFrame, y_train: pl.Series):
-    self.model.fit(X_train.select(self.input_features).to_pandas(), y_train.to_pandas())
+    # feature engineer committee features: median donation amount and party donated the most to
+    self.committee_df_with_party = (X_train
+                                    .with_columns(y_train.alias('amount'))
+                                    .group_by(['committee.id', 'candidate.party'])
+                                    .sum()
+                                    .sort(by='amount', descending=True)
+                                    .group_by('committee.id')
+                                    .first()[['committee.id', 'candidate.party']])
+    self.committee_df_with_median_donations = X_train.with_columns(y_train.alias('amount')).group_by('committee.id').median()[['committee.id', 'amount']]
+    
+    train_df = (X_train
+                .join(self.committee_df_with_party, on='committee.id', how='left')
+                .join(self.committee_df_with_median_donations, on='committee.id', how='left')
+                .select(self.input_features))
+    self.model.fit(train_df.to_pandas(), y_train.to_pandas())
 
   def predict(self, X: pl.DataFrame) -> np.ndarray:
-    return self.model.predict(X.select(self.input_features).to_pandas())
+    if self.committee_df_with_party is None or self.committee_df_with_median_donations is None:
+      raise ValueError('Call fit() before attempting to predict!')
+    
+    test_df = (X
+               .join(self.committee_df_with_party, on='committee.id', how='left')
+               .join(self.committee_df_with_median_donations, on='committee.id', how='left')
+               .select(self.input_features))
+    return self.model.predict(test_df.to_pandas())
